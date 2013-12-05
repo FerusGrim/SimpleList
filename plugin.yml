@@ -1,0 +1,38 @@
+name: SimpleList
+author: FerusGrim
+website: caelusrp.com
+version: 2.0.0
+main: com.caelusrp.ferusgrim.simplelist.SimpleList
+description: SimpleList keeps unknown players from accessing your server, in a variety of methods.
+commands:
+    whitelist:
+        description: SimpleList commands.
+        usage: /<command> <variable> [input]
+permissions:
+    simplelist.*:
+        description: Grants all permissions to SimpleList.
+        children:
+            simplelist.add: true
+            simplelist.remove: true
+            simplelist.print-failure: true
+            simplelist.reload: true
+            simplelist.refresh: true
+            simplelist.toggle: true
+    simplelist.add:
+        description: Adds user to SimpleList Database/File.
+        default: op
+    simplelist.remove:
+        description: Removes user from SimpleList Database/File.
+        default: op
+    simplelist.print-failure:
+        description: Receive notifications when users are forcibly disconnected.
+        default: op
+    simplelist.reload:
+        description: Reloads SimpleList configuration.
+        default: op
+    simplelist.refresh:
+        description: Refreshes the SimpleList File.
+        default: op
+    simplelist.toggle:
+        description: Toggle SimpleList off/on.
+        default: op
