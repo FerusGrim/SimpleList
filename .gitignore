@@ -27,3 +27,9 @@ local.properties
 
 # PDT-specific
 .buildpath
+
+########
+## MY FILES
+########
+*.jar
+*.bat

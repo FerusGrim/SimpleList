@@ -17,8 +17,10 @@ import java.io.InputStreamReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
@@ -33,7 +35,7 @@ public class simplelist extends JavaPlugin {
 	public static YamlConfiguration Settings;
 	static File SettingsFile = new File(maindir + "config.yml");
 	static ArrayList<String> WhiteListedPlayers = new ArrayList<String>();
-	int RefreshWhitelistTaskID = -1;
+    int RefreshWhitelistTaskID = -1;
 	static boolean WhitelistON = true;
 
 	public void onDisable() {
@@ -43,9 +45,10 @@ public class simplelist extends JavaPlugin {
 		Settings = null;
 
 		this.getServer().getScheduler().cancelAllTasks();
-		RefreshWhitelistTaskID = -1;
+        RefreshWhitelistTaskID = -1;
+		//Shuts the whitelist down cleanly, preventing errors on "stop" command.
+		WhitelistON = false;
 	}
-
 	@SuppressWarnings("deprecation")
 	public void onEnable() {
 		new File(maindir).mkdir();
@@ -62,6 +65,14 @@ public class simplelist extends JavaPlugin {
 			//If it exists load the config
 			Settings = config.loadMain(false);
 		}
+		File WhitelistFile = new File(maindir + simplelist.Settings.getString("simplelist.file.name"));
+		if (!WhitelistFile.exists()) {
+			try {
+				WhitelistFile.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		// Sets the whitelists mode
 		WhitelistON = simplelist.Settings.getBoolean("simplelist.enabled");
 
@@ -69,17 +80,17 @@ public class simplelist extends JavaPlugin {
 
 		//Registers the Listener class
 		pm.registerEvents(new listener(), this);
-
-		log.log(Level.INFO, "§e[SL]§3 simplelist has been" + (WhitelistON == true ? "§c activated§3." : "§c off§3."));
+		ConsoleCommandSender console = getServer().getConsoleSender();
+		console.sendMessage(ChatColor.YELLOW + "[SL]" + ChatColor.DARK_AQUA + " SimpleList: " + (WhitelistON == true ? ChatColor.GREEN + "ACTIVE" : ChatColor.RED + "DEACTIVE") + ChatColor.DARK_AQUA + "!");
 		DebugPrint("§8You're seeing debugging messages! To deactivate these, set \"debug\" to 'false'.");
 		RefreshWhitelist(true);
-		if(RefreshWhitelistTaskID < 0){
-			RefreshWhitelistTaskID = getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
-				public void run() {
-					RefreshWhitelist(false);
-				}
-			}, 0, Settings.getInt("simplelist.file.update-interval") * 20);
-		}
+        if(RefreshWhitelistTaskID < 0){
+                RefreshWhitelistTaskID = getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
+                        public void run() {
+                                RefreshWhitelist(false);
+                        }
+                }, 0, Settings.getInt("simplelist.file.update-interval") * 20);
+        }
 	}
 
 	@Override
@@ -137,13 +148,14 @@ public class simplelist extends JavaPlugin {
 		}
 		if (auth) {
 			WhitelistON = true;
-			log.log(Level.INFO, "§e[SL] §3"
-					+ (player == null ? "A console administrator" : player.getName())
-					+ " has §a activated §3simplelist!");
-			sender.sendMessage("§e[SL] §3simplelist is now §aactive§3!");
+			ConsoleCommandSender console = getServer().getConsoleSender();
+			console.sendMessage(ChatColor.YELLOW + "[SL] "
+					+ ChatColor.DARK_AQUA + (player == null ? "A console administrator" : player.getName())
+					+ " changed SimpleList status: " + ChatColor.GREEN + "ACTIVE" + ChatColor.DARK_AQUA + "!");
+						sender.sendMessage("§e[SL] §3SimpleList: §aACTIVE§3!");
 			return true;
 		}
-		sender.sendMessage("§e[SL] §cAccess to simplelist has been denied!");
+		sender.sendMessage("§e[SL] §cInsufficient privelages!");
 		return true;
 	}
 
@@ -159,13 +171,14 @@ public class simplelist extends JavaPlugin {
 		}
 		if (auth) {
 			WhitelistON = false;
-			log.log(Level.INFO, "§e[SL] §3"
-					+ (player == null ? "A console administrator" : player.getName())
-					+ " has §c deactivated §3simplelist!");
-			sender.sendMessage("§e[SL] §3simplelist has now been§c deactived§3!");
+			ConsoleCommandSender console = getServer().getConsoleSender();
+			console.sendMessage(ChatColor.YELLOW + "[SL] "
+					+ ChatColor.DARK_AQUA + (player == null ? "A console administrator" : player.getName())
+					+ " changed SimpleList status: " + ChatColor.RED + "DEACTIVE" + ChatColor.DARK_AQUA + "!");
+			sender.sendMessage("§e[SL] §3SimpleList: §cDEACTIVE§3!");
 			return true;
 		}
-		sender.sendMessage("§e[SL] §cAccess to simplelist has been denied!");
+		sender.sendMessage("§e[SL] §cInsufficient privelages!");
 		return true;
 	}
 
@@ -180,14 +193,15 @@ public class simplelist extends JavaPlugin {
 			auth = true;
 		}
 		if (auth) {
-			log.log(Level.INFO, "§e[SL] §3"
-					+ (player == null ? "A console administrator" : player.getName())
-					+ " has refreshed simplelist!");
-			sender.sendMessage("§e[SL] §3simplelist has been refreshed!");
+			ConsoleCommandSender console = getServer().getConsoleSender();
+			console.sendMessage(ChatColor.YELLOW + "[SL] "
+					+ ChatColor.DARK_AQUA + (player == null ? "A console administrator" : player.getName())
+					+ " refreshed SimpleList!");
+			sender.sendMessage("§e[SL] §3SimpleList: REFRESHED!");
 			(new UpdateWhitelist(false)).start();
 			return true;
 		}
-		sender.sendMessage("§e[SL] §cAccess to simplelist has been denied!");
+		sender.sendMessage("§e[SL] §cInsufficient privelages!");
 		return true;
 	}
 
@@ -213,13 +227,14 @@ public class simplelist extends JavaPlugin {
 		if (auth) {
 			onDisable();
 			onEnable();
-			log.log(Level.INFO, "§e[SL] §3"
-					+ (player == null ? "A console administrator" : player.getName())
-					+ " reloaded the simplelist configuration!");
-			sender.sendMessage("§e[SL] §3simplelist has been reloaded!");
+			ConsoleCommandSender console = getServer().getConsoleSender();
+			console.sendMessage(ChatColor.YELLOW + "[SL] "
+					+ ChatColor.DARK_AQUA + (player == null ? "A console administrator" : player.getName())
+					+ " reloaded SimpleList configuration!");
+			sender.sendMessage("§e[SL] §3SimpleList: RELOADED!");
 			return true;
 		}
-		sender.sendMessage("§e[SL] §cAccess to simplelist has been denied!");
+		sender.sendMessage("§e[SL] §cInsufficient privelages!");
 		return true;
 	}
 
@@ -228,7 +243,7 @@ public class simplelist extends JavaPlugin {
 		if(Type.equals("file")){
 			FileInputStream in;
 			try {
-				in = new FileInputStream(simplelist.Settings.getString("simplelist.file.name"));
+				in = new FileInputStream(maindir + simplelist.Settings.getString("simplelist.file.name"));
 
 				BufferedReader br = new BufferedReader(new InputStreamReader(in));
 				String strLine;
@@ -244,8 +259,9 @@ public class simplelist extends JavaPlugin {
 		}else if(Type.equals("mysql")){
 				Connection conn = connector.getSQLConnection();
 				if (conn == null) {
-					log.log(Level.SEVERE,
-							"§e[SL-001] §csimplelist could not establish a SQL connection!");
+					ConsoleCommandSender console = getServer().getConsoleSender();
+					console.sendMessage(ChatColor.YELLOW + "[SL-" + ChatColor.RED + "001" + ChatColor.YELLOW + "] "
+							+ ChatColor.RED + "SimpleList could not establish a SQL connection!");
 					return null;
 				} else {
 
@@ -267,8 +283,11 @@ public class simplelist extends JavaPlugin {
 						DebugPrint("Whitelist (type:" + Type +" count: " + tmpArray.toArray().length + ")");
 						return tmpArray;
 					} catch (SQLException ex) {
+						ConsoleCommandSender console = getServer().getConsoleSender();
+						console.sendMessage(ChatColor.YELLOW + "[SL-" + ChatColor.RED + "002" + ChatColor.YELLOW + "] "
+								+ ChatColor.RED + "SQL statement could not be executed!");
 						log.log(Level.SEVERE,
-								"§e[SL-002] §cSQL statement couldn't be executed!: ",
+								"STATEMENT:",
 								ex);
 					} finally {
 						try {
@@ -277,8 +296,11 @@ public class simplelist extends JavaPlugin {
 							if (conn != null)
 								conn.close();
 						} catch (SQLException ex) {
+							ConsoleCommandSender console = getServer().getConsoleSender();
+							console.sendMessage(ChatColor.YELLOW + "[SL-" + ChatColor.RED + "003" + ChatColor.YELLOW + "] "
+									+ ChatColor.RED + "Failed to close connection to database!");
 							log.log(Level.SEVERE,
-									"§e[SL-003] §cFailed to close connection to database!: ",
+									"STATEMENT:",
 									ex);
 						}
 					}
@@ -290,7 +312,8 @@ public class simplelist extends JavaPlugin {
 					}
 				}
 		}else{
-			simplelist.log.log(Level.SEVERE,"§e[SL-004] §cThe connection type you've chosen, \"§e" + simplelist.Settings.getString("simplelist.connection") + "§c\" doesn't exist!");
+			ConsoleCommandSender console = getServer().getConsoleSender();
+			console.sendMessage(ChatColor.YELLOW + "[SL-" + ChatColor.RED + "004" + ChatColor.YELLOW + "] " + ChatColor.DARK_AQUA + "The connection type you've chosen, \"" + ChatColor.YELLOW + simplelist.Settings.getString("simplelist.connection") + ChatColor.DARK_AQUA + "\" doesn't exist!");
 		}
 		return null;
 	}
@@ -311,7 +334,7 @@ public class simplelist extends JavaPlugin {
 
 				if (simplelist.WhiteListedPlayers.contains(p
 						.toLowerCase())) {
-					sender.sendMessage("§e[SL] §c The player, '§e" + p + "§c' is already whitelisted!");
+					sender.sendMessage("§e[SL] §3" + p + ":§c ALREADY WHITELISTED§3!");
 					return true;
 				}
 
@@ -319,7 +342,7 @@ public class simplelist extends JavaPlugin {
 				String ConType = simplelist.Settings.getString("simplelist.connection");
 				if(ConType.equals("file")){
 						try{
-							BufferedWriter fW = new BufferedWriter(new FileWriter(simplelist.Settings.getString("simplelist.file.name")));
+							BufferedWriter fW = new BufferedWriter(new FileWriter(maindir + simplelist.Settings.getString("simplelist.file.name")));
 							for(int i = 0; i< simplelist.WhiteListedPlayers.size(); i = i + 1){
 								fW.write(simplelist.WhiteListedPlayers.get(i));
 								fW.newLine();
@@ -328,7 +351,11 @@ public class simplelist extends JavaPlugin {
 						}catch (Exception e){
 							e.printStackTrace();
 						}
-						sender.sendMessage("§e[SL] §e" + p + " §a has been whitelisted!");
+						ConsoleCommandSender console = getServer().getConsoleSender();
+						console.sendMessage(ChatColor.YELLOW + "[SL] "
+								+ ChatColor.DARK_AQUA + (player == null ? "A console administrator" : player.getName())
+								+ " whitelisted " + ChatColor.YELLOW + p + ChatColor.DARK_AQUA + "!");
+						sender.sendMessage("§e[SL] §3" + p + ":§a WHITELISTED§3!");
 						return true;
 				}else if(ConType.equals("mysql")){
 						Connection conn = null;
@@ -340,8 +367,11 @@ public class simplelist extends JavaPlugin {
 							ps.setString(1, p);
 							ps.executeUpdate();
 						} catch (SQLException ex) {
+							ConsoleCommandSender console = getServer().getConsoleSender();
+							console.sendMessage(ChatColor.YELLOW + "[SL-" + ChatColor.RED + "005" + ChatColor.YELLOW + "] "
+									+ ChatColor.RED + "SQL statement couldn't be executed!");
 							log.log(Level.SEVERE,
-									"§e[SL-005] §cSQL statement couldn't be executed!: ",
+									"STATEMENT:",
 									ex);
 						} finally {
 							try {
@@ -350,23 +380,29 @@ public class simplelist extends JavaPlugin {
 								if (conn != null)
 									conn.close();
 							} catch (SQLException ex) {
+								ConsoleCommandSender console = getServer().getConsoleSender();
+								console.sendMessage(ChatColor.YELLOW + "[SL-" + ChatColor.RED + "006" + ChatColor.YELLOW + "] "
+										+ ChatColor.RED + "Failed to close connection to database!");
 								log.log(Level.SEVERE,
-										"§e[SL-006] §cFailed to close connection to database!: ",
+										"STATEMENT:",
 										ex);
 							}
 						}
 
-						log.log(Level.INFO, "§e[SL] §3"
-								+ (player == null ? "A console administrator" : player.getName())
-								+ " whitelisted §e" + p + "§3!");
-						sender.sendMessage("§e[SL] " + p + "§3 was added to the whitelist!");
+						ConsoleCommandSender console = getServer().getConsoleSender();
+						console.sendMessage(ChatColor.YELLOW + "[SL] "
+								+ ChatColor.DARK_AQUA + (player == null ? "A console administrator" : player.getName())
+								+ " whitelisted " + ChatColor.YELLOW + p + ChatColor.DARK_AQUA + "!");
+						sender.sendMessage("§e[SL] §3" + p + ":§a WHITELISTED§3!");
 						return true;
 				}else{
-					simplelist.log.log(Level.SEVERE,"§e[SL-007] §cThe connection type you've chosen, \"§e" + simplelist.Settings.getString("simplelist.connection") + "§c\" doesn't exist!");
+					ConsoleCommandSender console = getServer().getConsoleSender();
+					console.sendMessage(ChatColor.YELLOW + "[SL-" + ChatColor.RED + "007" + ChatColor.YELLOW + "] " + ChatColor.DARK_AQUA + "The connection type you've chosen, \"" + ChatColor.YELLOW + simplelist.Settings.getString("simplelist.connection") + ChatColor.DARK_AQUA + "\" doesn't exist!");
+					
 				}
 			}
 		}
-		sender.sendMessage("§e[SL] §cAccess to simplelist has been denied!");
+		sender.sendMessage("§e[SL] §cInsufficient privelages!");
 		return true;
 	}
 
@@ -387,7 +423,7 @@ public class simplelist extends JavaPlugin {
 
 				if (!simplelist.WhiteListedPlayers.contains(p
 						.toLowerCase())) {
-					sender.sendMessage("");
+					sender.sendMessage("§e[SL] §3" + p + ": §cISN'T WHITELISTED§3!");
 					return true;
 				}
 
@@ -400,7 +436,7 @@ public class simplelist extends JavaPlugin {
 				String ConType = simplelist.Settings.getString("simplelist.connection");
 				if(ConType.equals("file")){
 					try{
-						BufferedWriter fW = new BufferedWriter(new FileWriter(simplelist.Settings.getString("simplelist.file.name")));
+						BufferedWriter fW = new BufferedWriter(new FileWriter(maindir + simplelist.Settings.getString("simplelist.file.name")));
 						for(int i = 0; i< simplelist.WhiteListedPlayers.size(); i = i + 1){
 							fW.write(simplelist.WhiteListedPlayers.get(i));
 							fW.newLine();
@@ -419,8 +455,11 @@ public class simplelist extends JavaPlugin {
 						ps.setString(1, p);
 						ps.executeUpdate();
 					} catch (SQLException ex) {
+						ConsoleCommandSender console = getServer().getConsoleSender();
+						console.sendMessage(ChatColor.YELLOW + "[SL-" + ChatColor.RED + "008" + ChatColor.YELLOW + "] "
+								+ ChatColor.RED + "SQL statement couldn't be executed!");
 						log.log(Level.SEVERE,
-								"§e[SL-008] §cSQL statement couldn't be executed!: ",
+								"STATEMENT:",
 								ex);
 					} finally {
 						try {
@@ -429,29 +468,34 @@ public class simplelist extends JavaPlugin {
 							if (conn != null)
 								conn.close();
 						} catch (SQLException ex) {
+							ConsoleCommandSender console = getServer().getConsoleSender();
+							console.sendMessage(ChatColor.YELLOW + "[SL-" + ChatColor.RED + "009" + ChatColor.YELLOW + "] "
+									+ ChatColor.RED + "Failed to close connection to database!");
 							log.log(Level.SEVERE,
-									"§e[SL-009] §cFailed to close connection to database!: ",
+									"STATEMENT:",
 									ex);
 						}
 					}
 				}else{
-					simplelist.log.log(Level.SEVERE,"§e[SL-010] §cThe connection type you've chosen, \"§e" + simplelist.Settings.getString("simplelist.connection") + "§c\" doesn't exist!");
+					ConsoleCommandSender console = getServer().getConsoleSender();
+					console.sendMessage(ChatColor.YELLOW + "[SL-" + ChatColor.RED + "010" + ChatColor.YELLOW + "] " + ChatColor.DARK_AQUA + "The connection type you've chosen, \"" + ChatColor.YELLOW + simplelist.Settings.getString("simplelist.connection") + ChatColor.DARK_AQUA + "\" doesn't exist!");
 					return true;
 				}
-				log.log(Level.INFO, "§e[SL] §3"
-						+ (player == null ? "A console administrator" : player.getName())
-						+ " removed §e" + p + "§3from the whitelist!");
-				sender.sendMessage("§e[SL] " + p + "§3 was removed from the whitelist!");
+				ConsoleCommandSender console = getServer().getConsoleSender();
+				console.sendMessage(ChatColor.YELLOW + "[SL] "
+						+ ChatColor.DARK_AQUA + (player == null ? "A console administrator" : player.getName())
+						+ " de-whitelisted " + ChatColor.YELLOW + p + ChatColor.DARK_AQUA + "!");
+				sender.sendMessage("§e[SL] §3" + p + ":§c DE-WHITELISTED§3!");
 				return true;
 			}
 		}
-		sender.sendMessage("§e[SL] §cAccess to simplelist has been denied!");
+		sender.sendMessage("§e[SL] §cInsufficient privelages!");
 		return true;
 	}
 
 	public static void DebugPrint(String MSG) {
 		if (Settings.getBoolean("simplelist.debug")) {
-			log.log(Level.INFO, "§e[SL-debug] §7" + MSG);
+			log.log(Level.INFO, "[SL-debug] " + MSG);
 		}
 	}
 
@@ -490,14 +534,16 @@ public class simplelist extends JavaPlugin {
 				TmpArray = GetWhitelist(ConType);
 				if(!TmpArray.equals(null)){
 					if(First){
-						log.log(Level.INFO, "§e[SL] §3Whitelist loaded successfully!");
+						ConsoleCommandSender console = getServer().getConsoleSender();
+						console.sendMessage(ChatColor.YELLOW + "[SL] " + ChatColor.DARK_AQUA + "SimpleList: " + ChatColor.GREEN + "LOADED " + ChatColor.DARK_AQUA + "!");
 					}
 					simplelist.WhiteListedPlayers = TmpArray;
 				}
 				TmpArray = null;
 				return;
 			}
-			simplelist.log.log(Level.SEVERE,"§e[SL-011] §cThe connection type you've chosen, \"§e" + simplelist.Settings.getString("simplelist.connection") + "§c\" doesn't exist!");
+			ConsoleCommandSender console = getServer().getConsoleSender();
+			console.sendMessage(ChatColor.YELLOW + "[SL-" + ChatColor.RED + "010" + ChatColor.YELLOW + "] " + ChatColor.DARK_AQUA + "The connection type you've chosen, \"" + ChatColor.YELLOW + simplelist.Settings.getString("simplelist.connection") + ChatColor.DARK_AQUA + "\" doesn't exist!");
 		}
 	}
 }

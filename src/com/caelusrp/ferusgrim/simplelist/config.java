@@ -17,7 +17,7 @@ public class config {
     }
 
     public static YamlConfiguration loadMain(boolean Create){
-        String maindir = "plugins/SimpleList/";
+        String maindir = "plugins/simplelist/";
         File Settings = new File(maindir + "config.yml");
         try {
             config = new YamlConfiguration();
