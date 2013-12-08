@@ -183,7 +183,7 @@ public class simplelist extends JavaPlugin {
 			ConsoleCommandSender console = getServer().getConsoleSender();
 			console.sendMessage(ChatColor.YELLOW + "[SimpleList] "
 					+ (player == null ?  simplelist.CPhrases.getString("ConsolePhrases.Toggle.WhitelistOn.IfConsole") : simplelist.CPhrases.getString("ConsolePhrases.Toggle.WhitelistOn.IfPlayer")
-					.replace("{player}", player.getName())));
+					.replace("{whitelister}", player.getName())));
 			sender.sendMessage(simplelist.Phrases.getString("Phrases.Toggle.WhitelistOn"));
 			return true;
 		}
@@ -206,7 +206,7 @@ public class simplelist extends JavaPlugin {
 			ConsoleCommandSender console = getServer().getConsoleSender();
 			console.sendMessage(ChatColor.YELLOW + "[SimpleList] "
 					+ (player == null ?  simplelist.CPhrases.getString("ConsolePhrases.Toggle.WhitelistOff.IfConsole") : simplelist.CPhrases.getString("ConsolePhrases.Toggle.WhitelistOff.IfPlayer")
-					.replace("{player}", player.getName())));
+					.replace("{whitelister}", player.getName())));
 			sender.sendMessage(simplelist.Phrases.getString("Phrases.Toggle.WhitelistOff"));
 			return true;
 		}
@@ -228,7 +228,7 @@ public class simplelist extends JavaPlugin {
 			ConsoleCommandSender console = getServer().getConsoleSender();
 			console.sendMessage(ChatColor.YELLOW + "[SimpleList] "
 					+ (player == null ?  simplelist.CPhrases.getString("ConsolePhrases.Refresh.IfConsole") : simplelist.CPhrases.getString("ConsolePhrases.Refresh.IfPlayer")
-					.replace("{player}", player.getName())));
+					.replace("{whitelister}", player.getName())));
 			sender.sendMessage(simplelist.Phrases.getString("Phrases.Refresh"));
 			(new UpdateWhitelist(false)).start();
 			return true;
@@ -262,7 +262,7 @@ public class simplelist extends JavaPlugin {
 			ConsoleCommandSender console = getServer().getConsoleSender();
 			console.sendMessage(ChatColor.YELLOW + "[SimpleList] "
 					+ (player == null ?  simplelist.CPhrases.getString("ConsolePhrases.Reload.IfConsole") : simplelist.CPhrases.getString("ConsolePhrases.Reload.IfPlayer")
-					.replace("{player}", player.getName())));
+					.replace("{whitelister}", player.getName())));
 			sender.sendMessage(simplelist.Phrases.getString("Phrases.Reload"));
 			return true;
 		}

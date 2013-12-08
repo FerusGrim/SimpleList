@@ -26,13 +26,13 @@ public class consolePhrase {
 			SetDefault("ConsolePhrases.Whitelist.Loaded", "Whitelist loaded!");
 			SetDefault("ConsolePhrases.Whitelist.DeniedAccess", "{player} was denied!");
 			SetDefault("ConsolePhrases.Toggle.WhitelistOn.IfConsole", "A console administrator toggled the whitelist on!");
-			SetDefault("ConsolePhrases.Toggle.WhitelistOn.IfPlayer", "{player} toggled the whitelist on!");
+			SetDefault("ConsolePhrases.Toggle.WhitelistOn.IfPlayer", "{whitelister} toggled the whitelist on!");
 			SetDefault("ConsolePhrases.Toggle.WhitelistOff.IfConsole", "A console administrator toggled the whitelist off!");
-			SetDefault("ConsolePhrases.Toggle.WhitelistOff.IfPlayer", "{player} toggled the whitelist off!");
+			SetDefault("ConsolePhrases.Toggle.WhitelistOff.IfPlayer", "{whitelister} toggled the whitelist off!");
 			SetDefault("ConsolePhrases.Refresh.IfConsole", "A console administrator refreshed the whitelist!");
-			SetDefault("ConsolePhrases.Refresh.IfPlayer", "{player} refreshed the whitelist!");
+			SetDefault("ConsolePhrases.Refresh.IfPlayer", "{whitelister} refreshed the whitelist!");
 			SetDefault("ConsolePhrases.Reload.IfConsole", "A console administrator reloaded the whitelist!");
-			SetDefault("ConsolePhrases.Reload.IfPlayer", "{player} reloaded the whitelist!");
+			SetDefault("ConsolePhrases.Reload.IfPlayer", "{whitelister} reloaded the whitelist!");
 			SetDefault("ConsolePhrases.AddUser.IfConsole", "A console administrator added {player} to the whitelist!");
 			SetDefault("ConsolePhrases.AddUser.IfPlayer", "{whitelister} added {player} to the whitelist!");
 			SetDefault("ConsolePhrases.RemoveUser.IfConsole", "A console administrator removed {player} from the whitelist!");

@@ -1,7 +1,7 @@
 name: SimpleList
 author: FerusGrim
 website: caelusrp.com
-version: 2.2.0
+version: 2.2.1
 main: com.caelusrp.ferusgrim.simplelist.simplelist
 description: SimpleList keeps unknown players from accessing your server, in a variety of methods.
 commands:
