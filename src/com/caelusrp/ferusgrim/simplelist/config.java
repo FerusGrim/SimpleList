@@ -36,7 +36,7 @@ public class config {
             SetDefault("SimpleList.MySQL.Database.Field", "username");
             SetDefault("SimpleList.MySQL.Database.Query", "SELECT {Field} FROM {Table};");
             SetDefault("SimpleList.File.Name", "players.txt");
-            SetDefault("SimpleList.File.Update-Interval", "10");
+            SetDefault("SimpleList.File.Update-Interval", 10);
             config.save(Settings);
             return config;
         } catch (FileNotFoundException e) {
