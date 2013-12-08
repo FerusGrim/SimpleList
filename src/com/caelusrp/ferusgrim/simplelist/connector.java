@@ -7,23 +7,21 @@ import java.sql.SQLException;
 import java.sql.Connection;
 import java.util.logging.Level;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.command.ConsoleCommandSender;
-
 public class connector {
 
     public static Connection getSQLConnection() {
     	
         try {
-            return DriverManager.getConnection("jdbc:mysql://" + simplelist.Settings.getString("simplelist.mysql.host") + ":" + simplelist.Settings.getInt("simplelist.mysql.port") +"/" + simplelist.Settings.getString("simplelist.mysql.database") + "?autoReconnect=true&user=" + simplelist.Settings.getString("simplelist.mysql.username") + "&password=" + simplelist.Settings.getString("simplelist.mysql.password"));
+            return DriverManager.getConnection("jdbc:mysql://" + 
+            		simplelist.Settings.getString("SimpleList.MySQL.Host") + ":" + 
+            		simplelist.Settings.getInt("SimpleList.MySQL.Port") +"/" + 
+            		simplelist.Settings.getString("SimpleList.MySQL.Database.Database") + "?autoReconnect=true&user=" + 
+            		simplelist.Settings.getString("SimpleList.MySQL.Username") + "&password=" + 
+            		simplelist.Settings.getString("SimpleList.MySQL.Password"));
         } catch (SQLException ex) {
         	getServer();
-			ConsoleCommandSender console = Bukkit.getConsoleSender();
-			console.sendMessage(ChatColor.YELLOW + "[SL-" + ChatColor.RED + "011" + ChatColor.YELLOW + "] "
-					+ ChatColor.RED + "Connection to the server was refused!");
 			simplelist.log.log(Level.SEVERE,
-					"STATEMENT:",
+					"[SIMPLELIST] ERROR #112 : CONNECTION TO THE SQL SERVER WAS REFUSED!",
 					ex);
         }
         return null;

@@ -23,20 +23,21 @@ public class listener implements Listener {
             if(event.getResult() == Result.ALLOWED){
                 if(!simplelist.WhiteListedPlayers.contains(player.getName().toLowerCase())){
                     //Kick message
-                    String DisMSG = simplelist.Settings.getString("simplelist.notification.disallow-message")
+                    String DisMSG = simplelist.Phrases.getString("Phrases.NotifyFail.ToUser")
                             .replace("{player}", player.getName());
                     event.setKickMessage(DisMSG);
                     event.setResult(PlayerLoginEvent.Result.KICK_WHITELIST);
                 	getServer();
 					ConsoleCommandSender console = Bukkit.getConsoleSender();
-                    console.sendMessage(ChatColor.YELLOW + "[SL] " + ChatColor.DARK_AQUA + player.getName() + ": " + ChatColor.RED + "DENIED" + ChatColor.DARK_AQUA + "!");
+                    console.sendMessage(ChatColor.YELLOW + "[SimpleList] " + simplelist.CPhrases.getString("ConsolePhrases.Whitelist.DeniedAccess")
+                    		.replace("{player}", player.getName()));
                     //Check if print connection failures is enabled
-                    if(simplelist.Settings.getBoolean("simplelist.notification.print-failure") == true){
-                        Bukkit.getServer().broadcast("§e[SL] §3" + simplelist.Settings.getString("simplelist.notification.failure-message").replace("{player}", player.getName()), "simplelist.displayfails");
+                    if(simplelist.Phrases.getBoolean("Phrases.NotifyFail.ShowFails") == true){
+                        Bukkit.getServer().broadcast(simplelist.Phrases.getString("Phrases.NotifyFail.ToMod").replace("{player}", player.getName()), "simplelist.displayfails");
                     }
                 }
             }else{
-                simplelist.DebugPrint("[SL-DEBUG] \"" + player.getName() + "\" was already denied access by another plugin.");
+                simplelist.DebugPrint("[SIMPLELIST-DEBUG] \"" + player.getName() + "\" was already denied access by another plugin.");
             }
         }
     }

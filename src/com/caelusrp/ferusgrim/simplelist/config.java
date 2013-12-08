@@ -24,22 +24,19 @@ public class config {
             if(Create == false){
                 config.load(Settings);
             }
-            SetDefault("simplelist.enabled", true);
-            SetDefault("simplelist.connection", "mysql");
-            SetDefault("simplelist.debug", false);
-            SetDefault("simplelist.notification.disallow-message", "§e[SL]§f Sorry, {player}, but you aren't whitelisted.");
-            SetDefault("simplelist.notification.print-failure", true);
-            SetDefault("simplelist.notification.failure-message", "§e[SL]§f {player} attempted to join.");
-            SetDefault("simplelist.file.name", "players.txt");
-            SetDefault("simplelist.file.update-interval", "10");
-            SetDefault("simplelist.mysql.host", "localhost");
-            SetDefault("simplelist.mysql.port", 3306);
-            SetDefault("simplelist.mysql.username", "root");
-            SetDefault("simplelist.mysql.password", "toor");
-            SetDefault("simplelist.mysql.database", "whitelist");
-            SetDefault("simplelist.mysql.table", "users");
-            SetDefault("simplelist.mysql.field", "username");
-            SetDefault("simplelist.mysql.query", "SELECT {field} FROM `{table}`;");
+            SetDefault("SimpleList.Enabled", true);
+            SetDefault("SimpleList.Debug-Mode", false);
+            SetDefault("SimpleList.DatabaseType", "file");
+            SetDefault("SimpleList.MySQL.Host", "localhost");
+            SetDefault("SimpleList.MySQL.Port", 3306);
+            SetDefault("SimpleList.MySQL.Username", "root");
+            SetDefault("SimpleList.MySQL.Password", "toor");
+            SetDefault("SimpleList.MySQL.Database.Database", "whitelist");
+            SetDefault("SimpleList.MySQL.Database.Table", "users");
+            SetDefault("SimpleList.MySQL.Database.Field", "username");
+            SetDefault("SimpleList.MySQL.Database.Query", "SELECT {Field} FROM {Table};");
+            SetDefault("SimpleList.File.Name", "players.txt");
+            SetDefault("SimpleList.File.Update-Interval", "10");
             config.save(Settings);
             return config;
         } catch (FileNotFoundException e) {
